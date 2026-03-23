@@ -1,0 +1,61 @@
+{
+  "COMMON": {
+    "LOGOUT": "Cerrar Sesión",
+    "LANGUAGE": "Idioma",
+    "LOADING": "Cargando",
+    "ACTIONS": "Acciones",
+    "EDIT": "Editar",
+    "DELETE": "Eliminar",
+    "CANCEL": "Cancelar",
+    "SAVE": "Guardar",
+    "SEARCH": "Buscar",
+    "CLEAR": "Limpiar",
+    "ID": "ID",
+    "NAME": "Nombre",
+    "EMAIL": "Correo",
+    "STATUS": "Estado",
+    "DATE": "Fecha",
+    "RESOURCE": "Recurso",
+    "DESCRIPTION": "Descripción",
+    "CONFIRM_DELETE": "¿Estás seguro de que quieres eliminar este elemento?"
+  },
+  "NAV": {
+    "REQUESTS": "Solicitudes",
+    "RESOURCES": "Recursos"
+  },
+  "AUTH": {
+    "LOGIN": "Iniciar Sesión",
+    "SUBTITLE": "Ingresa a tu cuenta",
+    "EMAIL": "Correo Electrónico",
+    "EMAIL_PLACEHOLDER": "Ingresa tu correo",
+    "PASSWORD": "Contraseña",
+    "PASSWORD_PLACEHOLDER": "Ingresa tu contraseña",
+    "LOGIN_BTN": "Entrar",
+    "ERROR_CREDENTIALS": "Credenciales inválidas"
+  },
+  "REQUESTS": {
+    "TITLE": "Gestión de Solicitudes",
+    "CREATE_NEW": "Crear Nueva Solicitud",
+    "NEW_TITLE": "Nueva Solicitud",
+    "EDIT_TITLE": "Editar Solicitud",
+    "FILTER_NAME": "Filtrar por Nombre",
+    "FILTER_EMAIL": "Filtrar por Correo",
+    "ALL_STATUSES": "Todos los estados",
+    "STATUS_PENDING": "Pendiente",
+    "STATUS_APPROVED": "Aprobado",
+    "STATUS_REJECTED": "Rechazado",
+    "LOADING": "Cargando solicitudes...",
+    "EMPTY": "No se encontraron solicitudes con esos criterios.",
+    "APPLICANT_NAME": "Nombre del Solicitante",
+    "APPLICANT_NAME_PLACEHOLDER": "Ej: Juan Pérez",
+    "SELECT_RESOURCE": "Selecciona un recurso...",
+    "CREATE_BTN": "Crear Solicitud",
+    "UPDATE_BTN": "Actualizar Solicitud"
+  },
+  "RESOURCES": {
+    "TITLE": "Gestión de Recursos",
+    "ADD_NEW": "Añadir Nuevo Recurso",
+    "SEARCH_PLACEHOLDER": "Buscar por nombre...",
+    "EMPTY": "No se encontraron recursos."
+  }
+}

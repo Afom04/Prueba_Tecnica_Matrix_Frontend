@@ -1,0 +1,64 @@
+<div class="list-container">
+  <div class="header">
+    <h2>{{ 'REQUESTS.TITLE' | translate }}</h2>
+    <button class="btn-primary" routerLink="new">{{ 'REQUESTS.CREATE_NEW' | translate }}</button>
+  </div>
+
+  <div class="filters-bar">
+    <form [formGroup]="filterForm" (ngSubmit)="onFilter()" class="filter-form">
+      <input type="text" formControlName="name" [placeholder]="'REQUESTS.FILTER_NAME' | translate" />
+      <input type="text" formControlName="email" [placeholder]="'REQUESTS.FILTER_EMAIL' | translate" />
+      <select formControlName="status">
+        <option value="">{{ 'REQUESTS.ALL_STATUSES' | translate }}</option>
+        <option value="PENDING">{{ 'REQUESTS.STATUS_PENDING' | translate }}</option>
+        <option value="APPROVED">{{ 'REQUESTS.STATUS_APPROVED' | translate }}</option>
+        <option value="REJECTED">{{ 'REQUESTS.STATUS_REJECTED' | translate }}</option>
+      </select>
+      <button type="submit" class="btn-filter">{{ 'COMMON.SEARCH' | translate }}</button>
+      <button type="button" class="btn-clear" (click)="filterForm.reset(); onFilter()">{{ 'COMMON.CLEAR' | translate }}</button>
+    </form>
+  </div>
+
+  <div *ngIf="loading$ | async" class="loading-overlay">
+    <div class="spinner"></div>
+    <span>{{ 'REQUESTS.LOADING' | translate }}</span>
+  </div>
+
+  <div class="table-responsive">
+    <table *ngIf="(requests$ | async) as requests">
+      <thead>
+        <tr>
+          <th>{{ 'COMMON.ID' | translate }}</th>
+          <th>{{ 'REQUESTS.APPLICANT' | translate }}</th>
+          <th>{{ 'COMMON.RESOURCE' | translate }}</th>
+          <th>{{ 'COMMON.DATE' | translate }}</th>
+          <th>{{ 'COMMON.STATUS' | translate }}</th>
+          <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let req of requests">
+          <td>{{ req.id }}</td>
+          <td>
+            <div class="name">{{ req.applicantName }}</div>
+            <div class="email text-muted">{{ req.applicantEmail }}</div>
+          </td>
+          <td>{{ req.resourceName }}</td>
+          <td>{{ req.createdAt | date:'short' }}</td>
+          <td>
+            <span class="badge" [ngClass]="req.status.toLowerCase()">
+              {{ 'REQUESTS.STATUS_' + req.status | translate }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn-icon btn-edit" [routerLink]="['edit', req.id]">{{ 'COMMON.EDIT' | translate }}</button>
+            <button class="btn-icon btn-delete" (click)="onDelete(req.id)">{{ 'COMMON.DELETE' | translate }}</button>
+          </td>
+        </tr>
+        <tr *ngIf="requests.length === 0">
+          <td colspan="6" class="empty">{{ 'REQUESTS.EMPTY' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

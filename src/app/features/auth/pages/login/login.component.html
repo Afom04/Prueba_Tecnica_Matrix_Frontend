@@ -1,0 +1,35 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-brand-header">
+      <div class="nav-brand">ABC Solicitudes</div>
+      <div class="lang-selector">
+        <button (click)="onLanguageChange('es')" [class.active]="currentLang === 'es'">🇪🇸</button>
+        <button (click)="onLanguageChange('en')" [class.active]="currentLang === 'en'">🇺🇸</button>
+      </div>
+    </div>
+    
+    <h2>{{ 'AUTH.LOGIN' | translate }}</h2>
+    <p>{{ 'AUTH.SUBTITLE' | translate }}</p>
+    
+    <div *ngIf="error$ | async as error" class="error-alert">
+      {{ error }}
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">{{ 'AUTH.EMAIL' | translate }}</label>
+        <input id="email" type="email" formControlName="email" [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">{{ 'AUTH.PASSWORD' | translate }}</label>
+        <input id="password" type="password" formControlName="password" [placeholder]="'AUTH.PASSWORD_PLACEHOLDER' | translate" />
+      </div>
+
+      <button type="submit" [disabled]="loginForm.invalid || (loading$ | async)">
+        <span *ngIf="loading$ | async">{{ 'COMMON.LOADING' | translate }}...</span>
+        <span *ngIf="!(loading$ | async)">{{ 'AUTH.LOGIN_BTN' | translate }}</span>
+      </button>
+    </form>
+  </div>
+</div>
