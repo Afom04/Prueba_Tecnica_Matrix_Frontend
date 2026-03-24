@@ -1,27 +1,46 @@
-# Frontend
+# Frontend — Prueba técnica
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
+Pequeña aplicación frontend creada con Angular. Este repositorio contiene la UI, servicios y stores usados en la prueba técnica.
 
-## Development server
+## Requisitos
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- Node.js (16+ recomendada)
+- npm
 
-## Code scaffolding
+## Instalación
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+1. Instala dependencias:
 
-## Build
+	npm install
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+2. Levanta la aplicación en modo desarrollo:
 
-## Running unit tests
+	npm start
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+	La app quedará disponible en http://localhost:4200/ y se recargará automáticamente al cambiar archivos.
 
-## Running end-to-end tests
+## Scripts útiles
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+- `npm start` — Inicia el servidor de desarrollo (`ng serve`).
+- `npm test` — Ejecuta tests unitarios.
+- `npm run build` — Genera los artefactos de producción en `dist/`.
 
-## Further help
+Revisa `package.json` para más scripts específicos.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Estructura relevante
+
+Resumen de carpetas importantes:
+
+- `src/app/core` — Servicios, interceptores, guards y modelos centrales.
+- `src/app/features` — Módulos por dominio (auth, requests, resources).
+- `src/app/shared` — Componentes y utilidades compartidas.
+- `src/assets/i18n` — Archivos de traducción (`en.json`, `es.json`).
+
+## Notas de desarrollo
+
+- El proyecto usa Angular CLI (v17+). Usa `ng generate` para scaffolding (componentes, servicios, guards, etc.).
+- Para agregar nuevas traducciones, edita los archivos en `src/assets/i18n`.
+
+## Contacto
+
+Si necesitas que ajuste este README (idioma, más instrucciones, ejemplos), dime qué quieres que añada y lo actualizo.
