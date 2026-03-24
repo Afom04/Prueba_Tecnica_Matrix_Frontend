@@ -3,13 +3,16 @@ import { provideState } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { requestReducer } from './store/request.reducer';
 import { RequestEffects } from './store/request.effects';
+import { resourceReducer } from '../resources/store/resource.reducer';
+import { ResourceEffects } from '../resources/store/resource.effects';
 
 export const requestsRoutes: Routes = [
   {
     path: '',
     providers: [
       provideState('requests', requestReducer),
-      provideEffects([RequestEffects])
+      provideState('resources', resourceReducer),
+      provideEffects([RequestEffects, ResourceEffects])
     ],
     children: [
       {

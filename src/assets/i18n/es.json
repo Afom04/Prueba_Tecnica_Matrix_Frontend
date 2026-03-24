@@ -7,6 +7,7 @@
     "EDIT": "Editar",
     "DELETE": "Eliminar",
     "CANCEL": "Cancelar",
+    "CONFIRM": "Confirmar",
     "SAVE": "Guardar",
     "SEARCH": "Buscar",
     "CLEAR": "Limpiar",
@@ -17,7 +18,20 @@
     "DATE": "Fecha",
     "RESOURCE": "Recurso",
     "DESCRIPTION": "Descripción",
+    "REQUIRED": "Este campo es requerido",
+    "INVALID_EMAIL": "El formato del correo no es válido.",
     "CONFIRM_DELETE": "¿Estás seguro de que quieres eliminar este elemento?"
+  },
+  "ERRORS": {
+    "SERVER_UNREACHABLE": "No se pudo conectar con el servidor. Por favor, verifica tu conexión o intenta más tarde.",
+    "UNAUTHORIZED": "Tu sesión ha expirado o no tienes permisos.",
+    "NOT_FOUND": "El recurso solicitado no existe.",
+    "INTERNAL_SERVER_ERROR": "Ocurrió un error en el servidor. Por favor, contacta a soporte.",
+    "GENERIC": "Algo salió mal. Por favor, intenta de nuevo.",
+    "CREATE_FAILED": "No se pudo crear el elemento. ",
+    "UPDATE_FAILED": "No se pudo actualizar el elemento. ",
+    "DELETE_FAILED": "No se pudo eliminar el elemento. ",
+    "LOAD_FAILED": "No se pudieron cargar los datos. "
   },
   "NAV": {
     "REQUESTS": "Solicitudes",
@@ -35,6 +49,7 @@
   },
   "REQUESTS": {
     "TITLE": "Gestión de Solicitudes",
+    "APPLICANT": "Solicitante",
     "CREATE_NEW": "Crear Nueva Solicitud",
     "NEW_TITLE": "Nueva Solicitud",
     "EDIT_TITLE": "Editar Solicitud",
@@ -55,7 +70,10 @@
   "RESOURCES": {
     "TITLE": "Gestión de Recursos",
     "ADD_NEW": "Añadir Nuevo Recurso",
+    "NEW_TITLE": "Nuevo Recurso",
+    "EDIT_TITLE": "Editar Recurso",
     "SEARCH_PLACEHOLDER": "Buscar por nombre...",
+    "LOADING": "Cargando recursos...",
     "EMPTY": "No se encontraron recursos."
   }
 }

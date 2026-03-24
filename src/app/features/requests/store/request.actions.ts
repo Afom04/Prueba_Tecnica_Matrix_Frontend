@@ -24,3 +24,5 @@ export const deleteRequestFailure = createAction('[Request] Delete Request Failu
 export const findById = createAction('[Request] Find By Id', props<{ id: number }>());
 export const findByIdSuccess = createAction('[Request] Find By Id Success', props<{ request: RequestModel }>());
 export const findByIdFailure = createAction('[Request] Find By Id Failure', props<{ error: string }>());
+
+export const clearRequestError = createAction('[Request] Clear Error');

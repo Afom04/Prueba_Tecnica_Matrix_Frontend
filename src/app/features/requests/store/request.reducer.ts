@@ -9,7 +9,7 @@ export const requestReducer = createReducer(
   on(RequestActions.loadRequestsSuccess, (state, { response }) => ({
     ...state,
     loading: false,
-    requests: response.content,
+    requests: response.number === 0 ? response.content : [...state.requests, ...response.content],
     totalElements: response.totalElements,
     page: response.number,
     size: response.size
@@ -46,5 +46,7 @@ export const requestReducer = createReducer(
     loading: false,
     selectedRequest: request
   })),
-  on(RequestActions.findByIdFailure, (state, { error }) => ({ ...state, loading: false, error }))
+  on(RequestActions.findByIdFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+  on(RequestActions.clearRequestError, (state) => ({ ...state, error: null }))
 );

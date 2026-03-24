@@ -1,22 +1,25 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, map, tap, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { Router } from '@angular/router';
 import { RequestService } from '../services/request.service';
 import * as RequestActions from './request.actions';
+import { mapHttpErrorToKey } from '../../../core/utils/error-handler.util';
 
 @Injectable()
 export class RequestEffects {
   private actions$ = inject(Actions);
   private requestService = inject(RequestService);
+  private router = inject(Router);
 
   loadRequests$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RequestActions.loadRequests),
-      exhaustMap(action =>
+      switchMap(action =>
         this.requestService.getAll(action).pipe(
           map(response => RequestActions.loadRequestsSuccess({ response })),
-          catchError((error: Error) => of(RequestActions.loadRequestsFailure({ error: error.message })))
+          catchError((error) => of(RequestActions.loadRequestsFailure({ error: mapHttpErrorToKey(error, 'ERRORS.LOAD_FAILED') })))
         )
       )
     )
@@ -28,10 +31,18 @@ export class RequestEffects {
       exhaustMap(action =>
         this.requestService.create(action.request).pipe(
           map(request => RequestActions.createRequestSuccess({ request })),
-          catchError((error: Error) => of(RequestActions.createRequestFailure({ error: error.message })))
+          catchError((error) => of(RequestActions.createRequestFailure({ error: mapHttpErrorToKey(error, 'ERRORS.CREATE_FAILED') })))
         )
       )
     )
+  );
+
+  createRequestSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RequestActions.createRequestSuccess),
+      tap(() => this.router.navigate(['/requests']))
+    ),
+    { dispatch: false }
   );
 
   updateRequest$ = createEffect(() =>
@@ -40,10 +51,18 @@ export class RequestEffects {
       exhaustMap(action =>
         this.requestService.update(action.id, action.request).pipe(
           map(request => RequestActions.updateRequestSuccess({ request })),
-          catchError((error: Error) => of(RequestActions.updateRequestFailure({ error: error.message })))
+          catchError((error) => of(RequestActions.updateRequestFailure({ error: mapHttpErrorToKey(error, 'ERRORS.UPDATE_FAILED') })))
         )
       )
     )
+  );
+
+  updateRequestSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RequestActions.updateRequestSuccess),
+      tap(() => this.router.navigate(['/requests']))
+    ),
+    { dispatch: false }
   );
 
   deleteRequest$ = createEffect(() =>
@@ -52,7 +71,7 @@ export class RequestEffects {
       exhaustMap(({ id }) =>
         this.requestService.delete(id).pipe(
           map(() => RequestActions.deleteRequestSuccess({ id })),
-          catchError((error: Error) => of(RequestActions.deleteRequestFailure({ error: error.message })))
+          catchError((error) => of(RequestActions.deleteRequestFailure({ error: mapHttpErrorToKey(error, 'ERRORS.DELETE_FAILED') })))
         )
       )
     )
@@ -64,7 +83,7 @@ export class RequestEffects {
       exhaustMap(({ id }) =>
         this.requestService.getById(id).pipe(
           map(request => RequestActions.findByIdSuccess({ request })),
-          catchError((error: Error) => of(RequestActions.findByIdFailure({ error: error.message })))
+          catchError((error) => of(RequestActions.findByIdFailure({ error: mapHttpErrorToKey(error, 'ERRORS.LOAD_FAILED') })))
         )
       )
     )

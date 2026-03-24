@@ -8,7 +8,7 @@ export const resourceReducer = createReducer(
   on(ResourceActions.loadResourcesSuccess, (state, { response }) => ({
     ...state,
     loading: false,
-    resources: response.content,
+    resources: response.number === 0 ? response.content : [...state.resources, ...response.content],
     totalElements: response.totalElements,
     page: response.number,
     size: response.size
@@ -37,5 +37,15 @@ export const resourceReducer = createReducer(
     loading: false,
     resources: state.resources.filter(r => r.id !== id)
   })),
-  on(ResourceActions.deleteResourceFailure, (state, { error }) => ({ ...state, loading: false, error }))
+  on(ResourceActions.deleteResourceFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+  on(ResourceActions.findResourceById, (state) => ({ ...state, loading: true })),
+  on(ResourceActions.findResourceByIdSuccess, (state, { resource }) => ({
+    ...state,
+    loading: false,
+    selectedResource: resource
+  })),
+  on(ResourceActions.findResourceByIdFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+  on(ResourceActions.clearResourceError, (state) => ({ ...state, error: null }))
 );

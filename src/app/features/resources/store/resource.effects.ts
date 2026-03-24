@@ -1,22 +1,25 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, map, tap, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { Router } from '@angular/router';
 import { ResourceService } from '../services/resource.service';
 import * as ResourceActions from './resource.actions';
+import { mapHttpErrorToKey } from '../../../core/utils/error-handler.util';
 
 @Injectable()
 export class ResourceEffects {
   private actions$ = inject(Actions);
   private resourceService = inject(ResourceService);
+  private router = inject(Router);
 
   loadResources$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ResourceActions.loadResources),
-      exhaustMap(action =>
+      switchMap(action =>
         this.resourceService.getAll(action).pipe(
           map(response => ResourceActions.loadResourcesSuccess({ response })),
-          catchError((error: Error) => of(ResourceActions.loadResourcesFailure({ error: error.message })))
+          catchError((error) => of(ResourceActions.loadResourcesFailure({ error: mapHttpErrorToKey(error, 'ERRORS.LOAD_FAILED') })))
         )
       )
     )
@@ -28,10 +31,18 @@ export class ResourceEffects {
       exhaustMap(action =>
         this.resourceService.create(action.resource).pipe(
           map(resource => ResourceActions.createResourceSuccess({ resource })),
-          catchError((error: Error) => of(ResourceActions.createResourceFailure({ error: error.message })))
+          catchError((error) => of(ResourceActions.createResourceFailure({ error: mapHttpErrorToKey(error, 'ERRORS.CREATE_FAILED') })))
         )
       )
     )
+  );
+
+  createResourceSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ResourceActions.createResourceSuccess),
+      tap(() => this.router.navigate(['/resources']))
+    ),
+    { dispatch: false }
   );
 
   updateResource$ = createEffect(() =>
@@ -40,10 +51,18 @@ export class ResourceEffects {
       exhaustMap(action =>
         this.resourceService.update(action.id, action.resource).pipe(
           map(resource => ResourceActions.updateResourceSuccess({ resource })),
-          catchError((error: Error) => of(ResourceActions.updateResourceFailure({ error: error.message })))
+          catchError((error) => of(ResourceActions.updateResourceFailure({ error: mapHttpErrorToKey(error, 'ERRORS.UPDATE_FAILED') })))
         )
       )
     )
+  );
+
+  updateResourceSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ResourceActions.updateResourceSuccess),
+      tap(() => this.router.navigate(['/resources']))
+    ),
+    { dispatch: false }
   );
 
   deleteResource$ = createEffect(() =>
@@ -52,7 +71,7 @@ export class ResourceEffects {
       exhaustMap(({ id }) =>
         this.resourceService.delete(id).pipe(
           map(() => ResourceActions.deleteResourceSuccess({ id })),
-          catchError((error: Error) => of(ResourceActions.deleteResourceFailure({ error: error.message })))
+          catchError((error) => of(ResourceActions.deleteResourceFailure({ error: mapHttpErrorToKey(error, 'ERRORS.DELETE_FAILED') })))
         )
       )
     )
@@ -64,7 +83,7 @@ export class ResourceEffects {
       exhaustMap(({ id }) =>
         this.resourceService.getById(id).pipe(
           map(resource => ResourceActions.findResourceByIdSuccess({ resource })),
-          catchError((error: Error) => of(ResourceActions.findResourceByIdFailure({ error: error.message })))
+          catchError((error) => of(ResourceActions.findResourceByIdFailure({ error: mapHttpErrorToKey(error, 'ERRORS.LOAD_FAILED') })))
         )
       )
     )

@@ -24,3 +24,5 @@ export const deleteResourceFailure = createAction('[Resource] Delete Resource Fa
 export const findResourceById = createAction('[Resource] Find By Id', props<{ id: number }>());
 export const findResourceByIdSuccess = createAction('[Resource] Find By Id Success', props<{ resource: ResourceModel }>());
 export const findResourceByIdFailure = createAction('[Resource] Find By Id Failure', props<{ error: string }>());
+
+export const clearResourceError = createAction('[Resource] Clear Error');

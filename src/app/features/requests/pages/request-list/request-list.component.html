@@ -4,6 +4,11 @@
     <button class="btn-primary" routerLink="new">{{ 'REQUESTS.CREATE_NEW' | translate }}</button>
   </div>
 
+  <div *ngIf="error$ | async as error" class="error-alert">
+    <span>{{ error | errorTranslate }}</span>
+    <button class="btn-icon btn-delete" (click)="clearError()" style="margin: 0; padding: 0.2rem 0.5rem;">✕</button>
+  </div>
+
   <div class="filters-bar">
     <form [formGroup]="filterForm" (ngSubmit)="onFilter()" class="filter-form">
       <input type="text" formControlName="name" [placeholder]="'REQUESTS.FILTER_NAME' | translate" />
@@ -14,17 +19,18 @@
         <option value="APPROVED">{{ 'REQUESTS.STATUS_APPROVED' | translate }}</option>
         <option value="REJECTED">{{ 'REQUESTS.STATUS_REJECTED' | translate }}</option>
       </select>
-      <button type="submit" class="btn-filter">{{ 'COMMON.SEARCH' | translate }}</button>
-      <button type="button" class="btn-clear" (click)="filterForm.reset(); onFilter()">{{ 'COMMON.CLEAR' | translate }}</button>
+      <div class="filter-actions">
+        <button type="submit" class="btn-filter">{{ 'COMMON.SEARCH' | translate }}</button>
+        <button type="button" class="btn-clear" (click)="filterForm.reset(); onFilter()">{{ 'COMMON.CLEAR' | translate }}</button>
+      </div>
     </form>
   </div>
 
-  <div *ngIf="loading$ | async" class="loading-overlay">
-    <div class="spinner"></div>
-    <span>{{ 'REQUESTS.LOADING' | translate }}</span>
-  </div>
-
   <div class="table-responsive">
+    <div *ngIf="loading$ | async" class="loading-overlay">
+      <div class="spinner"></div>
+      <span>{{ 'REQUESTS.LOADING' | translate }}</span>
+    </div>
     <table *ngIf="(requests$ | async) as requests">
       <thead>
         <tr>
@@ -60,5 +66,14 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div 
+    *ngIf="hasMore$ | async" 
+    appInfiniteScroll 
+    (scrolled)="onScroll()" 
+    class="scroll-sentinel"
+  >
+    <div *ngIf="loading$ | async" class="spinner-small"></div>
   </div>
 </div>

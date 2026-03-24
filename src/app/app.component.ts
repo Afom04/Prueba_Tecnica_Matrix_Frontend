@@ -7,11 +7,12 @@ import { Store } from '@ngrx/store';
 import { selectIsAuthenticated } from './core/store/auth/auth.selectors';
 import { logout } from './core/store/auth/auth.actions';
 import { LanguageService } from './core/services/language.service';
+import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule, FormsModule],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ConfirmDialogComponent],
   template: `
     <nav class="main-nav" *ngIf="isLoggedIn$ | async">
       <div class="nav-brand">ABC Solicitudes</div>
@@ -31,6 +32,7 @@ import { LanguageService } from './core/services/language.service';
           [style.background]="(isLoggedIn$ | async) ? '#f8f9fa' : 'transparent'">
       <router-outlet></router-outlet>
     </main>
+    <app-confirm-dialog />
   `,
   styles: [`
     .main-nav {

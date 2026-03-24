@@ -4,17 +4,20 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { ErrorTranslatePipe } from '../../../../shared/pipes/error-translate.pipe';
 import { createRequest, updateRequest, findById } from '../../store/request.actions';
 import { loadResources } from '../../../resources/store/resource.actions';
-import { selectAllResources } from '../../../resources/store/resource.selectors';
-import { selectRequestState } from '../../store/request.selectors';
-import { filter, take } from 'rxjs/operators';
+import { selectRequestsLoading, selectRequestsError, selectRequestState } from '../../store/request.selectors';
+import { selectAllResources, selectResourceLoading } from '../../../resources/store/resource.selectors';
+import { filter, take, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { RequestStatus } from '../../models/request.model';
+import { Subject } from 'rxjs';
+import { AutocompleteComponent } from '../../../../shared/components/autocomplete/autocomplete.component';
 
 @Component({
   selector: 'app-request-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslateModule, ErrorTranslatePipe, AutocompleteComponent],
   templateUrl: './request-form.component.html',
   styleUrls: ['./request-form.component.scss']
 })
@@ -26,7 +29,12 @@ export class RequestFormComponent implements OnInit {
 
   requestId: number | null = null;
   resources$ = this.store.select(selectAllResources);
-  loading$ = this.store.select(state => (state as any).requests.loading);
+  resourcesLoading$ = this.store.select(selectResourceLoading);
+  loading$ = this.store.select(selectRequestsLoading);
+  error$ = this.store.select(selectRequestsError);
+
+  initialResourceName: string = '';
+  private searchSubject = new Subject<string>();
 
   requestForm = this.fb.group({
     applicantName: ['', Validators.required],
@@ -35,9 +43,31 @@ export class RequestFormComponent implements OnInit {
     status: ['PENDING' as RequestStatus]
   });
 
+  get statusOptions(): RequestStatus[] {
+    const currentStatus = (this.requestForm.get('status')?.value as RequestStatus) || 'PENDING';
+    
+    // Si es nuevo, solo PENDING (o dejarlo así)
+    if (!this.requestId) return ['PENDING'];
+
+    // Si ya está en un estado final (APPROVED/REJECTED), no puede volver a PENDING
+    if (currentStatus === 'APPROVED' || currentStatus === 'REJECTED') {
+      return ['APPROVED', 'REJECTED'];
+    }
+
+    return ['PENDING', 'APPROVED', 'REJECTED'];
+  }
+
   ngOnInit(): void {
-    // Cargar recursos para el dropdown
-    this.store.dispatch(loadResources({}));
+    // Cargar recursos iniciales
+    this.store.dispatch(loadResources({ size: 20 }));
+
+    // Setup debounced search
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.store.dispatch(loadResources({ name: term, size: 20 }));
+    });
 
     // Detectar si es edición
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -50,6 +80,7 @@ export class RequestFormComponent implements OnInit {
         take(1)
       ).subscribe(state => {
         const req = state.selectedRequest!;
+        this.initialResourceName = req.resourceName || '';
         this.requestForm.patchValue({
           applicantName: req.applicantName,
           applicantEmail: req.applicantEmail,
@@ -58,6 +89,10 @@ export class RequestFormComponent implements OnInit {
         });
       });
     }
+  }
+
+  onResourceSearch(term: string) {
+    this.searchSubject.next(term);
   }
 
   onSubmit(): void {
@@ -75,7 +110,6 @@ export class RequestFormComponent implements OnInit {
       } else {
         this.store.dispatch(createRequest({ request: payload }));
       }
-      this.router.navigate(['/requests']);
     }
   }
 }

@@ -1,43 +1,63 @@
 <div class="form-container">
   <div class="form-card">
-    <h2>{{ (requestId ? 'REQUESTS.EDIT_TITLE' : 'REQUESTS.NEW_TITLE') | translate }}</h2>
-    
-    <form [formGroup]="requestForm" (ngSubmit)="onSubmit()">
+    <div *ngIf="error$ | async as error" class="error-alert">
+      {{ error | errorTranslate }}
+    </div>
+
+    <form [formGroup]="requestForm" (ngSubmit)="onSubmit()" *ngIf="!((error$ | async) && requestId && !(loading$ | async))">
       <div class="form-group">
         <label>{{ 'REQUESTS.APPLICANT_NAME' | translate }}</label>
         <input type="text" formControlName="applicantName" [placeholder]="'REQUESTS.APPLICANT_NAME_PLACEHOLDER' | translate" />
+        <div *ngIf="requestForm.get('applicantName')?.touched && requestForm.get('applicantName')?.errors?.['required']" class="error">
+          {{ 'COMMON.REQUIRED' | translate }}
+        </div>
       </div>
 
       <div class="form-group">
         <label>{{ 'AUTH.EMAIL' | translate }}</label>
         <input type="email" formControlName="applicantEmail" [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate" />
+        <div *ngIf="requestForm.get('applicantEmail')?.touched && requestForm.get('applicantEmail')?.errors" class="error">
+          <span *ngIf="requestForm.get('applicantEmail')?.errors?.['required']">{{ 'COMMON.REQUIRED' | translate }}</span>
+          <span *ngIf="requestForm.get('applicantEmail')?.errors?.['email']">{{ 'COMMON.INVALID_EMAIL' | translate }}</span>
+        </div>
       </div>
 
       <div class="form-group">
         <label>{{ 'COMMON.RESOURCE' | translate }}</label>
-        <select formControlName="resourceId">
-          <option [ngValue]="null" disabled>{{ 'REQUESTS.SELECT_RESOURCE' | translate }}</option>
-          <option *ngFor="let res of resources$ | async" [ngValue]="res.id">
-            {{ res.name }}
-          </option>
-        </select>
+        <app-autocomplete
+          formControlName="resourceId"
+          [options]="(resources$ | async) || []"
+          [loading]="(resourcesLoading$ | async) || false"
+          [placeholder]="'REQUESTS.SELECT_RESOURCE' | translate"
+          [initialDisplayValue]="initialResourceName"
+          (query)="onResourceSearch($event)"
+        ></app-autocomplete>
+        <div *ngIf="requestForm.get('resourceId')?.touched && requestForm.get('resourceId')?.errors?.['required']" class="error">
+          {{ 'COMMON.REQUIRED' | translate }}
+        </div>
       </div>
 
       <div class="form-group" *ngIf="requestId">
         <label>{{ 'COMMON.STATUS' | translate }}</label>
         <select formControlName="status">
-          <option value="PENDING">{{ 'REQUESTS.STATUS_PENDING' | translate }}</option>
-          <option value="APPROVED">{{ 'REQUESTS.STATUS_APPROVED' | translate }}</option>
-          <option value="REJECTED">{{ 'REQUESTS.STATUS_REJECTED' | translate }}</option>
+          <option *ngFor="let option of statusOptions" [value]="option">
+            {{ 'REQUESTS.STATUS_' + option | translate }}
+          </option>
         </select>
       </div>
 
       <div class="actions">
         <button type="button" class="btn-cancel" routerLink="/requests">{{ 'COMMON.CANCEL' | translate }}</button>
         <button type="submit" class="btn-submit" [disabled]="requestForm.invalid || (loading$ | async)">
-          {{ (requestId ? 'REQUESTS.UPDATE_BTN' : 'REQUESTS.CREATE_BTN') | translate }}
+          <span *ngIf="loading$ | async" class="spinner-button"></span>
+          {{ (loading$ | async) ? ('COMMON.LOADING' | translate) : ('COMMON.SAVE' | translate) }}
         </button>
       </div>
     </form>
+
+    <div *ngIf="(error$ | async) && requestId && !(loading$ | async)" class="error-placeholder">
+      <p>{{ 'ERRORS.LOAD_FAILED' | translate | errorTranslate }}</p>
+      <button class="btn-cancel" routerLink="/requests">{{ 'COMMON.CANCEL' | translate }}</button>
+    </div>
   </div>
 </div>
